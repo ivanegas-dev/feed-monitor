@@ -41,7 +41,7 @@ REQUIRED_FIELDS = {"students": [
 ERROR_TYPES = ["missing_field", "invalid_date", "invalid_email", "duplicate_id"]
 
 def email_name(first, last, n):
-"""Build the part of an email before the @, using only letters and digits.
+    """Build the part of an email before the @, using only letters and digits.
     (A name like O'Reilly would otherwise create an accidental bad email.)"""
     clean = lambda s: re.sub(r"[^a-z]", "", s.lower())
     return f"{clean(first)}.{clean(last)}{n}"
