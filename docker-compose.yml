@@ -1,0 +1,19 @@
+# Starts PostgreSQL (with the pgvector extension for AI search) in Docker.
+# Run with:  docker compose up -d
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: feedmonitor-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      # 5433 on your laptop -> 5432 inside the container.
+      # Uses 5433 so it won't clash with a PostgreSQL you may already have installed.
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # keeps your data when the container restarts
+
+volumes:
+  pgdata:
