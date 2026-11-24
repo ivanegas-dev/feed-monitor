@@ -1,8 +1,12 @@
-#Generate fake student/staff records with some deliberate
-#errors giving the validator something to catch.
-#run from project folder EX:
-#python -m app.generator --feed students --count 20 --seed 42
+"""Generate fake (synthetic) student or staff records, with some deliberate
+errors mixed in, so the validator has something to catch.
 
+None of this data is real. Names come from the Faker library, and every
+email address uses example.edu, a domain reserved for examples.
+
+Run from the project folder, for example:
+    python -m app.generator --feed students --count 20 --seed 42
+"""
 import argparse
 import json
 import random
@@ -37,7 +41,8 @@ REQUIRED_FIELDS = {"students": [
 ERROR_TYPES = ["missing_field", "invalid_date", "invalid_email", "duplicate_id"]
 
 def email_name(first, last, n):
-#build the email using letters and digits only, so removing any characters like ' from O'Reilly
+"""Build the part of an email before the @, using only letters and digits.
+    (A name like O'Reilly would otherwise create an accidental bad email.)"""
     clean = lambda s: re.sub(r"[^a-z]", "", s.lower())
     return f"{clean(first)}.{clean(last)}{n}"
 
@@ -67,7 +72,7 @@ def make_staff(n):
     }
 
 def add_error(record, feed, error_type, earlier_ids):
-    #Add an error to a record
+    """Break one thing about a record, in place."""
     if error_type == "missing_field":
         #blank out any required field except the ID.
         choices = [f for f in REQUIRED_FIELDS[feed] if f != ID_FIELD[feed]]
@@ -80,9 +85,11 @@ def add_error(record, feed, error_type, earlier_ids):
         record[ID_FIELD[feed]] = random.choice(earlier_ids)
 
 def generate_records(feed, count, error_rate=0.1, seed = None):
-    #returns a list of 'count' fake records for the given feed.
-    #about 'error_rate' of them (0.1 = 10%) have one deliberate problem
-    #pass a seed to get same records every time (repeatable tests)
+    """Return a list of `count` fake records for the given feed.
+
+    About `error_rate` of them (0.1 = 10%) have one deliberate problem.
+    Pass a `seed` to get the same records every time, which makes tests repeatable.
+    """
     if feed not in ID_FIELD:
         raise ValueError(f"feed must be one of {list(ID_FIELD)}, not {feed!r}")
     if seed is not None:
